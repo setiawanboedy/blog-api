@@ -32,7 +32,12 @@ class SecurityConfig(private val jwtFilter: JwtFilter, private val userDetailsSe
         http.csrf{
             csrf -> csrf.disable()
         }.authorizeHttpRequests{ auth ->
-            auth.requestMatchers("/api/auth/**").permitAll()
+            auth
+                .requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                ).permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
         }.sessionManagement{ session ->
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

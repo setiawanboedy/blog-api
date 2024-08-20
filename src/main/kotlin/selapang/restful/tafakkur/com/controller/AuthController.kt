@@ -1,5 +1,8 @@
 package selapang.restful.tafakkur.com.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -27,6 +30,13 @@ class AuthController(
     private val userService: UserService
 ) {
 
+    @Operation(summary = "Login to app", description = "Authenticate to get jwt token")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successful login"),
+            ApiResponse(responseCode = "401", description = "Bad credentials")
+        ]
+    )
     @PostMapping(
         value = ["/login"],
         produces = ["application/json"],
@@ -54,6 +64,13 @@ class AuthController(
 
     }
 
+    @Operation(summary = "Register to app", description = "Register to access app")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successful Register"),
+            ApiResponse(responseCode = "400", description = "Bad request")
+        ]
+    )
     @PostMapping(
         value = ["/register"],
         produces = ["application/json"],

@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import selapang.restful.tafakkur.com.dto.AuthenticationRequest
+import selapang.restful.tafakkur.com.dto.RegisterRequest
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,6 +50,38 @@ class AuthControllerTest {
             MockMvcRequestBuilders.post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authenticationRequest))
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    fun `test successful register`(){
+        val registerRequest = RegisterRequest(
+            username = "admin2",
+            email = "admin2@admin.com",
+            password = "password"
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerRequest))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+    }
+
+    @Test
+    fun `test register with invalid request`(){
+        val registerRequest = RegisterRequest(
+            username = "admin2",
+            email = "admin2@admin.com",
+            password = ""
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(registerRequest))
         )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
