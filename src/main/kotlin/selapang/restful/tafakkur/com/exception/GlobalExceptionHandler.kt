@@ -34,4 +34,15 @@ class GlobalExceptionHandler {
     fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<String>{
         return ResponseEntity(ex.message, HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(BadCredentialsException::class)
+    fun handleBadCredentialsException(ex: BadCredentialsException): ResponseEntity<FormatResponse.Error<Nothing>> {
+        val body = FormatResponse.Error(
+            code = 401,
+            message = ex.message ?: "Bad credentials",
+            data = null
+        )
+
+        return ResponseEntity(body, HttpStatus.UNAUTHORIZED)
+    }
 }

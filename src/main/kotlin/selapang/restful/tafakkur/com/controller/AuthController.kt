@@ -14,6 +14,7 @@ import selapang.restful.tafakkur.com.dto.RegisterRequest
 import selapang.restful.tafakkur.com.dto.AuthenticationRequest
 import selapang.restful.tafakkur.com.dto.AuthenticationResponse
 import selapang.restful.tafakkur.com.dto.FormatResponse
+import selapang.restful.tafakkur.com.exception.BadCredentialsException
 import selapang.restful.tafakkur.com.service.UserService
 
 @RestController
@@ -26,31 +27,44 @@ class AuthController(
     private val userService: UserService
 ) {
 
-    @PostMapping("/login")
+    @PostMapping(
+        value = ["/login"],
+        produces = ["application/json"],
+        consumes = ["application/json"],
+    )
     fun createAuthenticationToken(@Valid @RequestBody authenticationRequest: AuthenticationRequest): FormatResponse<AuthenticationResponse> {
-        return try {
+        try {
             authenticationManager.authenticate(
                 UsernamePasswordAuthenticationToken(authenticationRequest.username, authenticationRequest.password)
             )
+
+        } catch (e: Exception) {
+            throw BadCredentialsException("Bad credentials")
+        }
+        return try {
 
             val userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username)
             val jwt = jwtUtil.generateToken(userDetails)
             val expiresIn = jwtUtil.extractExpiresIn(jwt)
             val response = AuthenticationResponse(token = jwt, expiresIn = expiresIn)
             FormatResponse.Success(data = response, message = "Authentication Successfully")
-        }catch (e: Exception){
+        } catch (e: Exception) {
             FormatResponse.Error(message = e.message.toString())
         }
 
     }
 
-    @PostMapping("/register")
+    @PostMapping(
+        value = ["/register"],
+        produces = ["application/json"],
+        consumes = ["application/json"],
+    )
     fun registerUser(@Valid @RequestBody registerRequest: RegisterRequest): FormatResponse<String> {
         return try {
             userService.registerUser(registerRequest)
             FormatResponse.Success(message = "User registered successfully", data = "User registered successfully")
         } catch (e: IllegalArgumentException) {
-            FormatResponse.Error(message =  e.message ?: "Registration failed")
+            FormatResponse.Error(message = e.message ?: "Registration failed")
         }
     }
 }
