@@ -45,4 +45,24 @@ class GlobalExceptionHandler {
 
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(UnauthorizedException::class)
+    fun handleUnauthorizedException(ex: UnauthorizedException): ResponseEntity<FormatResponse.Error<Nothing>> {
+        val body = FormatResponse.Error(
+            code = 401,
+            message = ex.message ?: "Unauthorized",
+            data = null
+        )
+        return ResponseEntity(body, HttpStatus.UNAUTHORIZED)
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun handleGenericException(ex: Exception): ResponseEntity<FormatResponse.Error<Nothing>> {
+        val body = FormatResponse.Error(
+            code = 500,
+            message = ex.message ?: "Internal Server Error",
+            data = null
+        )
+        return ResponseEntity(body, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
 }

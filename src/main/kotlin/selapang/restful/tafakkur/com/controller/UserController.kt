@@ -4,11 +4,12 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import selapang.restful.tafakkur.com.dto.FormatResponse
 import selapang.restful.tafakkur.com.dto.UserResponse
+import selapang.restful.tafakkur.com.exception.BadCredentialsException
+import selapang.restful.tafakkur.com.exception.UnauthorizedException
 import selapang.restful.tafakkur.com.service.UserService
 
 @RestController
@@ -38,7 +39,7 @@ class UserController(
                 FormatResponse.Error(code = 404, message = "User not found")
             }
         }catch (e: Exception){
-            FormatResponse.Error(message = "${e.message}")
+            throw UnauthorizedException("Unauthorized")
         }
     }
 
