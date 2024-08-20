@@ -1,5 +1,7 @@
 package selapang.restful.tafakkur.com.service
 
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import selapang.restful.tafakkur.com.dto.RegisterRequest
@@ -20,5 +22,21 @@ class UserService(
         )
 
         return userRepository.save(user)
+    }
+
+    fun getCurrentUser(): User?{
+        val authentication = SecurityContextHolder.getContext().authentication
+        val username = when (val principal = authentication.principal){
+            is UserDetails -> principal.username
+            is String -> principal
+            else -> null
+        }
+
+
+        return if (username != null){
+            userRepository.findUserByUsername(username)
+        }else{
+            null
+        }
     }
 }
