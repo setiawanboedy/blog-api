@@ -50,6 +50,6 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authenticationRequest))
         )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 }
