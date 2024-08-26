@@ -1,6 +1,7 @@
 package blog.restful.tafakkur.com.service
 
-import blog.restful.tafakkur.com.dto.PostRequest
+import blog.restful.tafakkur.com.dto.request.CreatePostRequest
+import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
 import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
 import org.springframework.stereotype.Service
@@ -9,9 +10,9 @@ import java.time.LocalDateTime
 @Service
 interface PostService{
     // Buat post
-    fun createPost(postRequest: PostRequest): Post
+    fun createPost(postRequest: CreatePostRequest): Post
     // Update post
-    fun updatePost(id: Long, postRequest: PostRequest): Post?
+    fun updatePost(id: Long, postRequest: UpdatePostRequest): Post?
 
     //List post
     fun getListPosts(): List<Post>

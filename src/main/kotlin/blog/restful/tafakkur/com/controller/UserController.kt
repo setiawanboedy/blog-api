@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import blog.restful.tafakkur.com.dto.FormatResponse
-import blog.restful.tafakkur.com.dto.UpdateUserRequest
-import blog.restful.tafakkur.com.dto.UserResponse
+import blog.restful.tafakkur.com.dto.request.UpdateUserRequest
+import blog.restful.tafakkur.com.dto.response.UserResponse
 import blog.restful.tafakkur.com.exception.UnauthorizedException
 import blog.restful.tafakkur.com.service.StorageService
 import blog.restful.tafakkur.com.service.UserService

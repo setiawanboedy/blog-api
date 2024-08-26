@@ -4,8 +4,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import blog.restful.tafakkur.com.dto.RegisterRequest
-import blog.restful.tafakkur.com.dto.UpdateUserRequest
+import blog.restful.tafakkur.com.dto.request.RegisterRequest
+import blog.restful.tafakkur.com.dto.request.UpdateUserRequest
 import blog.restful.tafakkur.com.model.User
 import blog.restful.tafakkur.com.repository.UserRepository
 import java.time.LocalDateTime

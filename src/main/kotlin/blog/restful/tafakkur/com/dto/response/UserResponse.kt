@@ -1,4 +1,4 @@
-package blog.restful.tafakkur.com.dto
+package blog.restful.tafakkur.com.dto.response
 
 data class UserResponse(
     val id: Long,

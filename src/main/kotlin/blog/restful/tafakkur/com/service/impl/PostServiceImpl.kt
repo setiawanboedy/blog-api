@@ -1,39 +1,40 @@
 package blog.restful.tafakkur.com.service.impl
 
 
-import blog.restful.tafakkur.com.dto.PostRequest
+import blog.restful.tafakkur.com.dto.request.CreatePostRequest
+import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
 import blog.restful.tafakkur.com.exception.NotFoundException
 import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
 import blog.restful.tafakkur.com.repository.PostRepository
 import blog.restful.tafakkur.com.service.PostService
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
 class PostServiceImpl(
     private val postRepository: PostRepository
-): PostService {
+) : PostService {
     // Buat post
-    override fun createPost(postRequest: PostRequest): Post{
+    override fun createPost(postRequest: CreatePostRequest): Post {
         val post = postRequest.toPost()
         return postRepository.save(post)
     }
+
     // Update post
-    override fun updatePost(id: Long, postRequest: PostRequest): Post?{
+    override fun updatePost(id: Long, postRequest: UpdatePostRequest): Post? {
         val post = getUpdatePost(id, postRequest)
         return post?.let { postRepository.save(it) }
     }
 
     //List post
-    override fun getListPosts(): List<Post>{
+    override fun getListPosts(): List<Post> {
         return postRepository.findAll()
     }
 
     //Get postById
-    override fun getPostById(id: Long): Post?{
-        return findProductByIdOrThrowNotFound(id)
+    override fun getPostById(id: Long): Post? {
+        return findPostByIdOrThrowNotFound(id)
     }
 
     //Delete post
@@ -42,55 +43,52 @@ class PostServiceImpl(
     }
 
     // Menemukan semua postingan berdasarkan kategori
-    override fun findByCategory(category: String): List<Post>{
+    override fun findByCategory(category: String): List<Post> {
         return postRepository.findByCategory(category)
     }
 
     // Menemukan postingan berdasarkan judul (case-insensitive)
-    override fun findByTitleIgnoreCase(title: String): List<Post>{
+    override fun findByTitleIgnoreCase(title: String): List<Post> {
         return postRepository.findByTitleIgnoreCase(title)
     }
 
     // Menemukan semua postingan yang diterbitkan
-    override fun findByStatus(status: PostStatus): List<Post>{
+    override fun findByStatus(status: PostStatus): List<Post> {
         return postRepository.findByStatus(status)
     }
 
     // Menemukan postingan berdasarkan penulis
-    override fun findByAuthor(author: String): List<Post>{
+    override fun findByAuthor(author: String): List<Post> {
         return postRepository.findByAuthor(author)
     }
 
     // Menemukan postingan yang dibuat setelah tanggal tertentu
-    override fun findByCreatedAtAfter(date: LocalDateTime): List<Post>{
+    override fun findByCreatedAtAfter(date: LocalDateTime): List<Post> {
         return postRepository.findByCreatedAtAfter(date)
     }
 
     // Menemukan postingan berdasarkan kata kunci di konten
-    override fun findByContentContainingIgnoreCase(keyword: String): List<Post>{
+    override fun findByContentContainingIgnoreCase(keyword: String): List<Post> {
         return postRepository.findByContentContainingIgnoreCase(keyword)
     }
 
-    private fun findProductByIdOrThrowNotFound(id: Long): Post {
-        val post = postRepository.findByIdOrNull(id)
-        if (post == null) {
-            throw NotFoundException()
-        } else {
-            return post;
-        }
+    private fun findPostByIdOrThrowNotFound(id: Long): Post {
+        val post = postRepository.findById(id).orElseThrow { NotFoundException("Post with ID $id not found") }
+        return post;
     }
 
-    private fun getUpdatePost(id: Long, request: PostRequest): Post?{
-        val post = getPostById(id)
-        post?.id = id
-        post?.title = request.title
-        post?.content = request.content
-        post?.author = request.author
-        post?.category = request.category
-        post?.slug = request.slug
-        post?.thumbnailImageUrl = request.thumbnailImageUrl
-        post?.tags = request.tags
-        post?.status = request.status
+    private fun getUpdatePost(id: Long, request: UpdatePostRequest): Post {
+        val post = findPostByIdOrThrowNotFound(id)
+        post.let {
+            it.title = request.title ?: it.title
+            it.content = request.content ?: it.content
+            it.author = request.author ?: it.author
+            it.category = request.category ?: it.category
+            it.slug = request.slug ?: it.slug
+            it.thumbnailImageUrl = request.thumbnailImageUrl ?: it.thumbnailImageUrl
+            it.tags = request.tags ?: it.tags
+            it.status = request.status ?: it.status
+        }
 
         return post
     }

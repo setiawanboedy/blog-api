@@ -10,9 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import blog.restful.tafakkur.com.dto.AuthenticationRequest
-import blog.restful.tafakkur.com.dto.RegisterRequest
-import blog.restful.tafakkur.com.dto.UpdateUserRequest
+import blog.restful.tafakkur.com.dto.request.UpdateUserRequest
 
 @SpringBootTest
 @AutoConfigureMockMvc

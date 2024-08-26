@@ -10,9 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.validation.annotation.Validated
 import blog.restful.tafakkur.com.config.JwtUtil
 import blog.restful.tafakkur.com.service.TokenBlacklistService
-import blog.restful.tafakkur.com.dto.RegisterRequest
-import blog.restful.tafakkur.com.dto.AuthenticationRequest
-import blog.restful.tafakkur.com.dto.AuthenticationResponse
+import blog.restful.tafakkur.com.dto.request.RegisterRequest
+import blog.restful.tafakkur.com.dto.request.AuthenticationRequest
+import blog.restful.tafakkur.com.dto.response.AuthenticationResponse
 import blog.restful.tafakkur.com.dto.FormatResponse
 import blog.restful.tafakkur.com.exception.BadCredentialsException
 import blog.restful.tafakkur.com.service.UserService

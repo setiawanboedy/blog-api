@@ -1,4 +1,4 @@
-package blog.restful.tafakkur.com.dto
+package blog.restful.tafakkur.com.dto.request
 
 import jakarta.validation.constraints.NotBlank
 

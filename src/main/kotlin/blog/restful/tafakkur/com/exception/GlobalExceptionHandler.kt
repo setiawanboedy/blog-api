@@ -32,7 +32,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<String>{
+    fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<String> {
         return ResponseEntity(ex.message, HttpStatus.BAD_REQUEST)
     }
 
@@ -71,5 +71,25 @@ class GlobalExceptionHandler {
     fun handleMaxSizeException(exc: MaxUploadSizeExceededException): ResponseEntity<String> {
         return ResponseEntity("File size exceeds the maximum limit!", HttpStatus.PAYLOAD_TOO_LARGE)
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = [NotFoundException::class])
+    fun handleNotFoundException(notFoundException: NotFoundException): ResponseEntity<FormatResponse.Error<Nothing>> {
+        val body = FormatResponse.Error(
+            code = 404,
+            status = "not found",
+            message = "${notFoundException.message}",
+            data = null
+        )
+        return ResponseEntity(body, HttpStatus.NOT_FOUND)
+    }
+
+//    @ExceptionHandler(NotFoundException::class)
+//    fun handleNotFoundException(ex: NotFoundException): ResponseEntity<Map<String, String>> {
+//        val errorResponse = mapOf(
+//            "status" to "error",
+//        )
+//        return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
+//    }
 
 }

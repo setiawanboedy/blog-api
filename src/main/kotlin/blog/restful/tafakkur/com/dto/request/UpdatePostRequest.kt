@@ -5,39 +5,22 @@ import blog.restful.tafakkur.com.model.PostStatus
 import blog.restful.tafakkur.com.validation.UniqueSlug
 import jakarta.validation.constraints.NotBlank
 
-data class CreatePostRequest(
-    @field:NotBlank(message = "required")
-    val title: String,
+data class UpdatePostRequest(
+    val id: Long,
 
-    @field:NotBlank(message = "required")
-    val content: String,
+    val title: String? = null,
 
-    @field:NotBlank(message = "required")
-    val author: String,
+    val content: String? = null,
 
-    @field:NotBlank(message = "required")
-    val category: String,
+    val author: String? = null,
 
-    @field:NotBlank(message = "required")
-    @field:UniqueSlug(message = "Slug must be unique")
-    val slug: String,
+    val category: String? = null,
+
+    val slug: String? = null,
 
     val thumbnailImageUrl: String? = null,
 
-    val tags: List<String> = mutableListOf(),
+    val tags: List<String>? = null,
 
-    val status: PostStatus = PostStatus.DRAFT,
-){
-    fun toPost(): Post{
-        return Post(
-            title = this.title,
-            content = this.content,
-            author = this.author,
-            category = this.category,
-            slug = this.slug,
-            thumbnailImageUrl = this.thumbnailImageUrl,
-            tags = this.tags,
-            status = this.status
-        )
-    }
-}
+    val status: PostStatus? = null,
+)

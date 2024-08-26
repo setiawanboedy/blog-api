@@ -1,4 +1,4 @@
-package blog.restful.tafakkur.com.dto
+package blog.restful.tafakkur.com.dto.response
 
 import blog.restful.tafakkur.com.model.PostStatus
 import java.time.LocalDateTime

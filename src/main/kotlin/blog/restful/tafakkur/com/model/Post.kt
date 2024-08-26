@@ -1,8 +1,7 @@
 package blog.restful.tafakkur.com.model
 
-import blog.restful.tafakkur.com.dto.PostResponse
+import blog.restful.tafakkur.com.dto.response.PostResponse
 import jakarta.persistence.*
-import jakarta.validation.constraints.NotBlank
 import java.time.LocalDateTime
 
 @Entity

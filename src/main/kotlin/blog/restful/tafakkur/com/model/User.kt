@@ -1,7 +1,7 @@
 package blog.restful.tafakkur.com.model
 
 import jakarta.persistence.*
-import blog.restful.tafakkur.com.dto.UserResponse
+import blog.restful.tafakkur.com.dto.response.UserResponse
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
@@ -35,7 +35,7 @@ data class User(
 
 ){
 
-    fun toUserResponse(): UserResponse{
+    fun toUserResponse(): UserResponse {
         return UserResponse(
             id = this.id,
             username = this.username,

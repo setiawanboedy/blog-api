@@ -5,7 +5,7 @@ import blog.restful.tafakkur.com.model.PostStatus
 import blog.restful.tafakkur.com.validation.UniqueSlug
 import jakarta.validation.constraints.NotBlank
 
-data class PostRequest(
+data class CreatePostRequest(
     @field:NotBlank(message = "required")
     val title: String,
 
