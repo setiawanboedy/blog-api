@@ -1,4 +1,4 @@
-package blog.restful.tafakkur.com.dto
+package blog.restful.tafakkur.com.dto.request
 
 import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
