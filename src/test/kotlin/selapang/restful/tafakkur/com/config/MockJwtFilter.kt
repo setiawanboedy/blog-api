@@ -1,4 +1,4 @@
-package selapang.restful.tafakkur.com.config
+package blog.restful.tafakkur.com.config
 
 import jakarta.servlet.*
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

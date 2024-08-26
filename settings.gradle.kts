@@ -1,1 +1,1 @@
-rootProject.name = "selapang-api"
+rootProject.name = "blog-api"

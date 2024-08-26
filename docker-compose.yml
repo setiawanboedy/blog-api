@@ -3,22 +3,22 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: selapang_api_mysql
+    container_name: blog_api_mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: selapang
-      MYSQL_USER: selapang
-      MYSQL_PASSWORD: selapang
+      MYSQL_DATABASE: blog
+      MYSQL_USER: blog
+      MYSQL_PASSWORD: blog
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - selapang_network
+      - blog_network
 
 volumes:
   mysql_data:
 
 networks:
-  selapang_network:
+  blog_network:
     driver: bridge

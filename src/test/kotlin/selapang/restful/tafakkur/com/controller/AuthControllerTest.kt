@@ -1,4 +1,4 @@
-package selapang.restful.tafakkur.com.controller
+package blog.restful.tafakkur.com.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
@@ -9,8 +9,8 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import selapang.restful.tafakkur.com.dto.AuthenticationRequest
-import selapang.restful.tafakkur.com.dto.RegisterRequest
+import blog.restful.tafakkur.com.dto.AuthenticationRequest
+import blog.restful.tafakkur.com.dto.RegisterRequest
 
 @SpringBootTest
 @AutoConfigureMockMvc

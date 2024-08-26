@@ -1,4 +1,4 @@
-package selapang.restful.tafakkur.com.config
+package blog.restful.tafakkur.com.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
