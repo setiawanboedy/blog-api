@@ -2,11 +2,11 @@
 
 ## Authentication
 
-## login
+## Login
 
 Request :
 - Method : POST
-- Endpoint : `/api/users/me`
+- Endpoint : `/api/auth/login`
 - Header :
     - Content-Type: application/json
     - Accept: application/json
@@ -16,6 +16,38 @@ Request :
 {
     "username" : "string|email, unique",
     "password" : "string"
+}
+```
+
+- Response :
+
+```json
+{
+    "status": "string",
+    "code": "number",
+    "message": "string",
+    "data": {
+        "token": "string, unique",
+        "expires_in": "number",
+    }
+}
+```
+
+## Register
+
+Request :
+- Method : POST
+- Endpoint : `/api/auth/register`
+- Header :
+    - Content-Type: application/json
+    - Accept: application/json
+- Body :
+
+```json
+{
+    "username":"string, unique",
+    "email":"string, unique",
+    "password":"string"
 }
 ```
 

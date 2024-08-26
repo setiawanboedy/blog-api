@@ -11,12 +11,14 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import blog.restful.tafakkur.com.dto.FormatResponse
+import blog.restful.tafakkur.com.service.TokenBlacklistService
 
 @Component
 class JwtFilter(
     private val jwtUtil: JwtUtil,
     private val userDetailsService: UserDetailsService,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val tokenBlacklistService: TokenBlacklistService
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         try {
@@ -27,13 +29,18 @@ class JwtFilter(
 
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7)
+                if (tokenBlacklistService.isTokenBlacklisted(jwt)) {
+                    sendErrorResponse(response, "Token has been logged out")
+                    return
+                }
                 username = jwtUtil.extractUsername(jwt)
             }
 
-            if (username != null && SecurityContextHolder.getContext().authentication == null) {
+
+            if (username != null && SecurityContextHolder.getContext().authentication == null && jwt != null) {
                 val userDetails = userDetailsService.loadUserByUsername(username)
 
-                if (jwtUtil.validateToken(jwt!!, userDetails)) {
+                if (jwtUtil.validateToken(jwt, userDetails)) {
                     val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.authorities
                     )

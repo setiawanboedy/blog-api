@@ -8,17 +8,16 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 import blog.restful.tafakkur.com.config.JwtUtil
+import blog.restful.tafakkur.com.service.TokenBlacklistService
 import blog.restful.tafakkur.com.dto.RegisterRequest
 import blog.restful.tafakkur.com.dto.AuthenticationRequest
 import blog.restful.tafakkur.com.dto.AuthenticationResponse
 import blog.restful.tafakkur.com.dto.FormatResponse
 import blog.restful.tafakkur.com.exception.BadCredentialsException
 import blog.restful.tafakkur.com.service.UserService
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,7 +26,8 @@ class AuthController(
     private val authenticationManager: AuthenticationManager,
     private val jwtUtil: JwtUtil,
     private val userDetailsService: UserDetailsService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val tokenBlacklist: TokenBlacklistService,
 ) {
 
     @Operation(summary = "Login to app", description = "Authenticate to get jwt token")
@@ -80,8 +80,28 @@ class AuthController(
         return try {
             userService.registerUser(registerRequest)
             FormatResponse.Success(message = "User registered successfully", data = "User registered successfully")
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
             FormatResponse.Error(message = e.message ?: "Registration failed")
+        }
+    }
+    @Operation(summary = "Logout from app", description = "Logout from access app")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Successful Logout"),
+        ]
+    )
+    @PostMapping("/logout")
+    fun logout(@RequestHeader("Authorization") authorizationHeader: String?, request: HttpServletRequest): FormatResponse<String> {
+        return try {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                val token = authorizationHeader.substring(7)
+                tokenBlacklist.addToken(token)
+            }
+
+            request.session.invalidate()
+            FormatResponse.Success(message = "Logout successfully", data = "Logout Success")
+        } catch (e: Exception) {
+            FormatResponse.Error(message = e.message ?: "Logout failed")
         }
     }
 }
