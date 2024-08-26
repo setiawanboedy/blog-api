@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import blog.restful.tafakkur.com.model.User
 import blog.restful.tafakkur.com.repository.UserRepository
+import java.time.LocalDateTime
 
 @Component
 class DataInitializer(
@@ -20,6 +21,8 @@ class DataInitializer(
                 username = "admin",
                 email = "admin@admin.com",
                 password = passwordEncoder.encode("password"),
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
             )
             userRepository.save(defaultUser)
         }

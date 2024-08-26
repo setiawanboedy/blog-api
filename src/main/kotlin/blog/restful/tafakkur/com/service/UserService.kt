@@ -8,6 +8,7 @@ import blog.restful.tafakkur.com.dto.RegisterRequest
 import blog.restful.tafakkur.com.dto.UpdateUserRequest
 import blog.restful.tafakkur.com.model.User
 import blog.restful.tafakkur.com.repository.UserRepository
+import java.time.LocalDateTime
 
 @Service
 class UserService(
@@ -19,7 +20,9 @@ class UserService(
         val user = User(
             username = registerRequest.username,
             email = registerRequest.email,
-            password = passwordEncoder.encode(registerRequest.password)
+            password = passwordEncoder.encode(registerRequest.password),
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
         )
 
         return userRepository.save(user)

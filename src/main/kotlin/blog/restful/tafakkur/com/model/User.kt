@@ -2,6 +2,9 @@ package blog.restful.tafakkur.com.model
 
 import jakarta.persistence.*
 import blog.restful.tafakkur.com.dto.UserResponse
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "Users")
@@ -20,9 +23,18 @@ data class User(
 
     var phoneNumber: String? = null,
     var address: String? = null,
-    var profilePicture: String? = null
+    var profilePicture: String? = null,
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    var createdAt: LocalDateTime? = null,
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    var updatedAt: LocalDateTime? = null,
 
 ){
+
     fun toUserResponse(): UserResponse{
         return UserResponse(
             id = this.id,

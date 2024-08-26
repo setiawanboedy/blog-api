@@ -71,4 +71,5 @@ class GlobalExceptionHandler {
     fun handleMaxSizeException(exc: MaxUploadSizeExceededException): ResponseEntity<String> {
         return ResponseEntity("File size exceeds the maximum limit!", HttpStatus.PAYLOAD_TOO_LARGE)
     }
+
 }
