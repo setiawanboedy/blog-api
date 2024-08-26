@@ -5,19 +5,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import selapang.restful.tafakkur.com.dto.FormatResponse
 import selapang.restful.tafakkur.com.dto.UpdateUserRequest
 import selapang.restful.tafakkur.com.dto.UserResponse
 import selapang.restful.tafakkur.com.exception.UnauthorizedException
+import selapang.restful.tafakkur.com.service.StorageService
 import selapang.restful.tafakkur.com.service.UserService
 
 @RestController
 @RequestMapping("/api/users")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
+    private val storageService: StorageService
 ) {
 
     @Operation(summary = "Get user app", description = "Get user by jwt token")
@@ -31,17 +34,17 @@ class UserController(
         value = ["/me"],
         produces = ["application/json"],
     )
-    fun getCurrentUser(): FormatResponse<UserResponse>{
+    fun getCurrentUser(): FormatResponse<UserResponse> {
         return try {
             val user = userService.getCurrentUser()
-            if (user != null){
+            if (user != null) {
                 val response = user.toUserResponse()
                 FormatResponse.Success(data = response, message = "Get user successfully")
-            }else {
+            } else {
                 throw UnauthorizedException("Unauthorized")
             }
-        }catch (e: Exception){
-                throw UnauthorizedException("Unauthorized")
+        } catch (e: Exception) {
+            throw UnauthorizedException("Unauthorized")
         }
     }
 
@@ -54,20 +57,31 @@ class UserController(
     )
     @PutMapping(
         value = ["/me"],
-        produces = ["application/json"],
-        consumes = ["application/json"],
     )
-    fun updateCurrentUser(@RequestBody updateUserRequest: UpdateUserRequest): FormatResponse<UserResponse>{
+    fun updateCurrentUser(
+        request: UpdateUserRequest,
+        @RequestPart(value = "picture", required = false) file: MultipartFile?,
+    ): FormatResponse<UserResponse> {
+
+        var profilePictureUrl: String? = null
+        file?.let {
+            profilePictureUrl = storageService.storeFile(it, subfolder = "users", replace = true)
+        }
         return try {
-            val updateUser = userService.updateCurrentUser(updateUserRequest)
-            if (updateUser != null){
+            val updateUserRequest = UpdateUserRequest(
+                phoneNumber = request.phoneNumber,
+                address = request.address,
+                profilePicture = profilePictureUrl
+            )
+            val updateUser = userService.updateCurrentUser(updateUserRequest, profilePictureUrl)
+            if (updateUser != null) {
                 val response = updateUser.toUserResponse()
                 FormatResponse.Success(data = response, message = "Update user successfully")
-            }else {
+            } else {
                 throw UnauthorizedException("Unauthorized")
             }
-        }catch (e: Exception){
-               FormatResponse.Error(message = "${e.message}")
+        } catch (e: Exception) {
+            FormatResponse.Error(message = "${e.message}")
         }
     }
 

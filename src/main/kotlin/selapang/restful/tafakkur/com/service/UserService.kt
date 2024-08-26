@@ -41,12 +41,12 @@ class UserService(
         }
     }
 
-    fun updateCurrentUser(updateUserRequest: UpdateUserRequest): User?{
+    fun updateCurrentUser(updateUserRequest: UpdateUserRequest, profilePictureUrl: String?): User?{
         val currentUser = getCurrentUser()
 
         currentUser?.phoneNumber = updateUserRequest.phoneNumber
         currentUser?.address = updateUserRequest.address
-        currentUser?.profilePicture = updateUserRequest.profilePicture
+        currentUser?.profilePicture = profilePictureUrl
 
         return currentUser?.let { userRepository.save(it) }
     }
