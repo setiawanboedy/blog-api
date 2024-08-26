@@ -5,6 +5,7 @@ import blog.restful.tafakkur.com.dto.request.CreatePostRequest
 import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
 import blog.restful.tafakkur.com.dto.response.PostResponse
 import blog.restful.tafakkur.com.exception.NotFoundException
+import blog.restful.tafakkur.com.exception.UnauthorizedException
 import blog.restful.tafakkur.com.service.PostService
 import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
@@ -72,8 +73,8 @@ class PostController(
                 listPosts.add(data.toPostResponse())
             }
             FormatResponse.Success(data = listPosts, message = "Get list post successfully")
-        }catch (e: RuntimeException){
-            FormatResponse.Error(message = "Get list post failed")
+        }catch (exception: UnauthorizedException){
+            throw exception
         }
     }
 }

@@ -11,7 +11,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import blog.restful.tafakkur.com.dto.FormatResponse
+import blog.restful.tafakkur.com.exception.UnauthorizedException
 import blog.restful.tafakkur.com.service.TokenBlacklistService
+import org.springframework.util.AntPathMatcher
 
 @Component
 class JwtFilter(
@@ -20,10 +22,20 @@ class JwtFilter(
     private val objectMapper: ObjectMapper,
     private val tokenBlacklistService: TokenBlacklistService
 ) : OncePerRequestFilter() {
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
+    private val pathMatcher = AntPathMatcher()
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
         try {
-            val authorizationHeader = request.getHeader("Authorization")
+            val requestPath = request.servletPath
+            if (isExcludedPath(requestPath)) {
+                filterChain.doFilter(request, response)
+                return
+            }
 
+            val authorizationHeader = request.getHeader("Authorization")
             var username: String? = null
             var jwt: String? = null
 
@@ -36,16 +48,18 @@ class JwtFilter(
                 username = jwtUtil.extractUsername(jwt)
             }
 
+            if (jwt == null) {
+                throw UnauthorizedException("Unauthorized")
+            }
 
-            if (username != null && SecurityContextHolder.getContext().authentication == null && jwt != null) {
+            if (SecurityContextHolder.getContext().authentication == null) {
                 val userDetails = userDetailsService.loadUserByUsername(username)
-
                 if (jwtUtil.validateToken(jwt, userDetails)) {
-                    val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
+                    val authToken = UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.authorities
                     )
-                    usernamePasswordAuthenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                    SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
+                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = authToken
                 } else {
                     sendErrorResponse(response, "Invalid JWT token")
                 }
@@ -55,7 +69,20 @@ class JwtFilter(
         } catch (ex: Exception) {
             sendErrorResponse(response, "Unauthorized")
         }
+
     }
+
+    private fun isExcludedPath(requestPath: String): Boolean {
+        // Daftar path yang dikecualikan dengan wildcard
+        val excludedPaths = listOf(
+            "/api/auth/login",
+            "/api/auth/register",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+        )
+        return excludedPaths.any { pathPattern -> pathMatcher.match(pathPattern, requestPath) }
+    }
+
 
     private fun sendErrorResponse(response: HttpServletResponse, message: String) {
         val errorResponse = FormatResponse.Error(

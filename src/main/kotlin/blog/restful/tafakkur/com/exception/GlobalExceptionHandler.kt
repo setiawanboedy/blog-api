@@ -47,6 +47,7 @@ class GlobalExceptionHandler {
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException::class)
     fun handleUnauthorizedException(ex: UnauthorizedException): ResponseEntity<FormatResponse.Error<Nothing>> {
         val body = FormatResponse.Error(
@@ -83,13 +84,5 @@ class GlobalExceptionHandler {
         )
         return ResponseEntity(body, HttpStatus.NOT_FOUND)
     }
-
-//    @ExceptionHandler(NotFoundException::class)
-//    fun handleNotFoundException(ex: NotFoundException): ResponseEntity<Map<String, String>> {
-//        val errorResponse = mapOf(
-//            "status" to "error",
-//        )
-//        return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
-//    }
 
 }
