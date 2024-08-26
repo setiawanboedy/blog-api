@@ -8,6 +8,8 @@ import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
 import blog.restful.tafakkur.com.repository.PostRepository
 import blog.restful.tafakkur.com.service.PostService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -24,12 +26,12 @@ class PostServiceImpl(
     // Update post
     override fun updatePost(id: Long, postRequest: UpdatePostRequest): Post? {
         val post = getUpdatePost(id, postRequest)
-        return post?.let { postRepository.save(it) }
+        return post.let { postRepository.save(it) }
     }
 
     //List post
-    override fun getListPosts(): List<Post> {
-        return postRepository.findAll()
+    override fun getListPosts(pageable: Pageable): Page<Post> {
+        return postRepository.findAll(pageable)
     }
 
     //Get postById

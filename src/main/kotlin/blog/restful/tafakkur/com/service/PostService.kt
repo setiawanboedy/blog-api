@@ -4,6 +4,8 @@ import blog.restful.tafakkur.com.dto.request.CreatePostRequest
 import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
 import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -15,7 +17,7 @@ interface PostService{
     fun updatePost(id: Long, postRequest: UpdatePostRequest): Post?
 
     //List post
-    fun getListPosts(): List<Post>
+    fun getListPosts(pageable: Pageable): Page<Post>
 
     //Get postById
     fun getPostById(id: Long): Post?

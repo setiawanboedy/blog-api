@@ -7,6 +7,8 @@ import blog.restful.tafakkur.com.dto.response.PostResponse
 import blog.restful.tafakkur.com.exception.NotFoundException
 import blog.restful.tafakkur.com.service.PostService
 import jakarta.validation.Valid
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -58,15 +60,19 @@ class PostController(
         value = ["list"],
         produces = ["application/json"],
     )
-    fun getListPosts(): FormatResponse<List<PostResponse>> {
+    fun getListPosts(
+        @RequestParam(value = "page", defaultValue = "0") page: Int,
+        @RequestParam(value = "size", defaultValue = "10") size: Int
+    ): FormatResponse<List<PostResponse>> {
         return try {
-            val posts = postService.getListPosts()
+            val pageable: Pageable = PageRequest.of(page, size)
+            val posts = postService.getListPosts(pageable)
             val listPosts = mutableListOf<PostResponse>()
             posts.forEach { data ->
                 listPosts.add(data.toPostResponse())
             }
             FormatResponse.Success(data = listPosts, message = "Get list post successfully")
-        }catch (e: Exception){
+        }catch (e: RuntimeException){
             FormatResponse.Error(message = "Get list post failed")
         }
     }
