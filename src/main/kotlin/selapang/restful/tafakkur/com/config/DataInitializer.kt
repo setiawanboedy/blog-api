@@ -20,7 +20,6 @@ class DataInitializer(
                 username = "admin",
                 email = "admin@admin.com",
                 password = passwordEncoder.encode("password"),
-
             )
             userRepository.save(defaultUser)
         }

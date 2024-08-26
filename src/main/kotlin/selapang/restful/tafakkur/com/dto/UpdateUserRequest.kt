@@ -1,9 +1,6 @@
 package selapang.restful.tafakkur.com.dto
 
-data class UserResponse(
-    val id: Long,
-    val username: String,
-    val email: String,
+data class UpdateUserRequest(
     val phoneNumber: String?,
     val address: String?,
     val profilePicture: String?,

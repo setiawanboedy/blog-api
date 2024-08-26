@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import selapang.restful.tafakkur.com.dto.RegisterRequest
+import selapang.restful.tafakkur.com.dto.UpdateUserRequest
 import selapang.restful.tafakkur.com.model.User
 import selapang.restful.tafakkur.com.repository.UserRepository
 
@@ -38,5 +39,15 @@ class UserService(
         }else{
             null
         }
+    }
+
+    fun updateCurrentUser(updateUserRequest: UpdateUserRequest): User?{
+        val currentUser = getCurrentUser()
+
+        currentUser?.phoneNumber = updateUserRequest.phoneNumber
+        currentUser?.address = updateUserRequest.address
+        currentUser?.profilePicture = updateUserRequest.profilePicture
+
+        return currentUser?.let { userRepository.save(it) }
     }
 }
