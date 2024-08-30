@@ -57,6 +57,7 @@ class PostController(
     )
     fun updatePost(
         @PathVariable("id") id: Long,
+        @Valid
         @RequestBody postRequest: UpdatePostRequest,
     ): ResponseEntity<FormatResponse<PostResponse>> {
          return try {
@@ -65,8 +66,11 @@ class PostController(
             ResponseEntity.ok(FormatResponse.Success(data = response, message = "Update post successfully"))
         }catch (exception: NotFoundException){
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
+        }catch (exception: MethodArgumentNotValidException){
+             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = exception.message))
+
         }catch (exception: Exception){
-             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = "Update post failed"))
+             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "Update post failed"))
 
         }
     }

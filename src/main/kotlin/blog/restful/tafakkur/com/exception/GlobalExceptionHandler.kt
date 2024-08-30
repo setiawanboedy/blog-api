@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.MaxUploadSizeExceededException
 import blog.restful.tafakkur.com.dto.FormatResponse
+import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.context.request.WebRequest
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -27,6 +29,19 @@ class GlobalExceptionHandler {
             data = errors
         )
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleInvalidEnumException(
+        ex: HttpMessageNotReadableException,
+        request: WebRequest
+    ): ResponseEntity<FormatResponse<Nothing>> {
+        val errorMessage = "Accepted values are: [DRAFT, PUBLISHED, ARCHIVED]"
+        return ResponseEntity(
+            FormatResponse.Error(status = "Error", code = 400, message = errorMessage),
+            HttpStatus.BAD_REQUEST
+        )
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
