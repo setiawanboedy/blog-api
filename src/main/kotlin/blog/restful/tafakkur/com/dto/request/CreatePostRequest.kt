@@ -12,7 +12,7 @@ data class CreatePostRequest(
     @field:NotBlank(message = "required")
     val content: String,
 
-    @field:NotBlank(message = "required")
+    @field:NotBlank(message = "required" )
     val author: String,
 
     @field:NotBlank(message = "required")

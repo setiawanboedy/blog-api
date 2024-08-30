@@ -43,7 +43,7 @@ class SecurityConfig(private val jwtFilter: JwtFilter) {
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                 ).permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
         }
             .sessionManagement{ session ->
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

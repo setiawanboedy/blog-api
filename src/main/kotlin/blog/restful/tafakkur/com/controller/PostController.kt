@@ -5,8 +5,15 @@ import blog.restful.tafakkur.com.dto.request.CreatePostRequest
 import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
 import blog.restful.tafakkur.com.dto.response.PostResponse
 import blog.restful.tafakkur.com.exception.NotFoundException
+import blog.restful.tafakkur.com.exception.UnauthorizedException
 import blog.restful.tafakkur.com.service.PostService
 import jakarta.validation.Valid
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,15 +33,22 @@ class PostController(
         produces = ["application/json"],
         consumes = ["application/json"],
     )
-    fun createPost(@Valid @RequestBody postRequest: CreatePostRequest): FormatResponse<PostResponse> {
+    fun createPost(
+        @Valid
+        @RequestBody
+        postRequest: CreatePostRequest
+        ): ResponseEntity<FormatResponse<PostResponse>> {
         return try {
             val post = postService.createPost(postRequest)
             val response = post.toPostResponse()
-            FormatResponse.Success(data = response, message = "Create post successfully")
+            ResponseEntity.ok(FormatResponse.Success(data = response, message = "Create post successfully"))
+        }catch (e: MethodArgumentNotValidException){
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = e.message))
         }catch (e: Exception){
-            FormatResponse.Error(message = "Create post failed: ${e.message}")
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "Create post failed"))
         }
     }
+
     @PutMapping(
         value = ["update/{id}"],
         produces = ["application/json"],
@@ -43,14 +57,16 @@ class PostController(
     fun updatePost(
         @PathVariable("id") id: Long,
         @RequestBody postRequest: UpdatePostRequest,
-    ): FormatResponse<PostResponse> {
-        return try {
+    ): ResponseEntity<FormatResponse<PostResponse>> {
+         return try {
             val post = postService.updatePost(id, postRequest)
             val response = post?.toPostResponse()
-            FormatResponse.Success(data = response, message = "Update post successfully")
+            ResponseEntity.ok(FormatResponse.Success(data = response, message = "Update post successfully"))
         }catch (exception: NotFoundException){
-            throw exception
-//            FormatResponse.Error(message = "Update post failed")
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
+        }catch (exception: Exception){
+             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = "Update post failed"))
+
         }
     }
 
@@ -58,16 +74,22 @@ class PostController(
         value = ["list"],
         produces = ["application/json"],
     )
-    fun getListPosts(): FormatResponse<List<PostResponse>> {
+    fun getListPosts(
+        @RequestParam(value = "page", defaultValue = "0") page: Int,
+        @RequestParam(value = "size", defaultValue = "10") size: Int
+    ): ResponseEntity<FormatResponse<List<PostResponse>>> {
         return try {
-            val posts = postService.getListPosts()
+            val pageable: Pageable = PageRequest.of(page, size)
+            val posts = postService.getListPosts(pageable)
             val listPosts = mutableListOf<PostResponse>()
             posts.forEach { data ->
                 listPosts.add(data.toPostResponse())
             }
-            FormatResponse.Success(data = listPosts, message = "Get list post successfully")
-        }catch (e: Exception){
-            FormatResponse.Error(message = "Get list post failed")
+            ResponseEntity.ok(FormatResponse.Success(data = listPosts, message = "Get list post successfully"))
+        }catch (exception: UnauthorizedException){
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(FormatResponse.Error(message = "Unauthorized"))
+        }catch (exception: Exception){
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = "Update post failed"))
         }
     }
 }

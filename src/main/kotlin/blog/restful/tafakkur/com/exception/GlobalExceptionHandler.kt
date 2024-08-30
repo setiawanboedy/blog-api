@@ -14,20 +14,19 @@ import blog.restful.tafakkur.com.dto.FormatResponse
 class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun handleValidationExceptions(ex: MethodArgumentNotValidException): ResponseEntity<FormatResponse.Error<MutableMap<String, String>>> {
-        val errors = mutableMapOf<String, String>()
+    fun handleValidationExceptions(ex: MethodArgumentNotValidException): ResponseEntity<FormatResponse<MutableMap<String, String>>> {
+        val errors: MutableMap<String, String> = HashMap()
         ex.bindingResult.allErrors.forEach { error ->
-            val filedName = (error as FieldError).field
-            val errorMessage = error.defaultMessage ?: "Invalid value"
-            errors[filedName] = errorMessage
+            val fieldName = (error as FieldError).field
+            val errorMessage = error.defaultMessage ?: "Invalid"
+            errors[fieldName] = errorMessage
         }
-
-        val response = FormatResponse.Error(
-            message = "Validation failed",
+        val body = FormatResponse.Error(
+            code = 400,
+            message = "Bad Request",
             data = errors
         )
-        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
@@ -47,6 +46,7 @@ class GlobalExceptionHandler {
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException::class)
     fun handleUnauthorizedException(ex: UnauthorizedException): ResponseEntity<FormatResponse.Error<Nothing>> {
         val body = FormatResponse.Error(
@@ -83,13 +83,5 @@ class GlobalExceptionHandler {
         )
         return ResponseEntity(body, HttpStatus.NOT_FOUND)
     }
-
-//    @ExceptionHandler(NotFoundException::class)
-//    fun handleNotFoundException(ex: NotFoundException): ResponseEntity<Map<String, String>> {
-//        val errorResponse = mapOf(
-//            "status" to "error",
-//        )
-//        return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
-//    }
 
 }
