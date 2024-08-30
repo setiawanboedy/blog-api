@@ -51,7 +51,7 @@ class PostController(
     }
 
     @PutMapping(
-        value = ["update/{id}"],
+        value = ["/{id}/update"],
         produces = ["application/json"],
         consumes = ["application/json"],
     )
@@ -75,8 +75,27 @@ class PostController(
         }
     }
 
+    @GetMapping(
+        value = ["/{id}/detail"],
+        produces = ["application/json"],
+    )
+    fun detailPost(
+        @PathVariable("id") id: Long,
+    ): ResponseEntity<FormatResponse<PostResponse>> {
+         return try {
+            val post = postService.getPostById(id)
+            val response = post?.toPostResponse()
+            ResponseEntity.ok(FormatResponse.Success(data = response, message = "Get post successfully"))
+        }catch (exception: NotFoundException){
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
+        }catch (exception: Exception){
+             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "Get post failed"))
+
+        }
+    }
+
     @DeleteMapping(
-        value = ["delete/{id}"],
+        value = ["/{id}/delete"],
     )
     fun deletePost(
         @PathVariable("id") id: Long,
