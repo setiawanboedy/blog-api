@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -66,6 +67,23 @@ class PostController(
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
         }catch (exception: Exception){
              ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = "Update post failed"))
+
+        }
+    }
+
+    @DeleteMapping(
+        value = ["delete/{id}"],
+    )
+    fun deletePost(
+        @PathVariable("id") id: Long,
+    ): ResponseEntity<FormatResponse<String>> {
+         return try {
+            postService.deletePost(id)
+            ResponseEntity.ok(FormatResponse.Success(data = "Success", message = "Delete post successfully"))
+        }catch (exception: NotFoundException){
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
+        }catch (exception: Exception){
+             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "Delete post failed"))
 
         }
     }

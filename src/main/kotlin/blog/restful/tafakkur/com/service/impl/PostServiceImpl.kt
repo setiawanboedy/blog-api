@@ -41,6 +41,7 @@ class PostServiceImpl(
 
     //Delete post
     override fun deletePost(id: Long) {
+        findPostByIdOrThrowNotFound(id)
         return postRepository.deleteById(id)
     }
 
