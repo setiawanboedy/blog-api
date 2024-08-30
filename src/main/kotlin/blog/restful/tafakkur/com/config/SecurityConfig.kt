@@ -44,7 +44,6 @@ class SecurityConfig(private val jwtFilter: JwtFilter) {
                     "/swagger-ui/**",
                 ).permitAll()
                 .anyRequest().authenticated()
-
         }
             .sessionManagement{ session ->
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

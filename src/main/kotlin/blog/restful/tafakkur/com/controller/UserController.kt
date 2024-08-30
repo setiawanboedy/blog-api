@@ -15,6 +15,8 @@ import blog.restful.tafakkur.com.dto.response.UserResponse
 import blog.restful.tafakkur.com.exception.UnauthorizedException
 import blog.restful.tafakkur.com.service.StorageService
 import blog.restful.tafakkur.com.service.UserService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 
 @RestController
 @RequestMapping("/api/users")
@@ -34,17 +36,19 @@ class UserController(
         value = ["/me"],
         produces = ["application/json"],
     )
-    fun getCurrentUser(): FormatResponse<UserResponse> {
+    fun getCurrentUser(): ResponseEntity<FormatResponse<UserResponse>> {
         return try {
             val user = userService.getCurrentUser()
             if (user != null) {
                 val response = user.toUserResponse()
-                FormatResponse.Success(data = response, message = "Get user successfully")
+                ResponseEntity.ok(FormatResponse.Success(data = response, message = "Get user successfully"))
             } else {
                 throw UnauthorizedException("Unauthorized")
             }
-        } catch (e: Exception) {
-            throw UnauthorizedException("Unauthorized")
+        } catch (e: UnauthorizedException) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(FormatResponse.Error(message = "${e.message}"))
+        }catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "${e.message}"))
         }
     }
 
@@ -61,7 +65,7 @@ class UserController(
     fun updateCurrentUser(
         request: UpdateUserRequest,
         @RequestPart(value = "picture", required = false) file: MultipartFile?,
-    ): FormatResponse<UserResponse> {
+    ): ResponseEntity<FormatResponse<UserResponse>> {
 
         var profilePictureUrl: String? = null
         file?.let {
@@ -76,12 +80,14 @@ class UserController(
             val updateUser = userService.updateCurrentUser(updateUserRequest, profilePictureUrl)
             if (updateUser != null) {
                 val response = updateUser.toUserResponse()
-                FormatResponse.Success(data = response, message = "Update user successfully")
+                ResponseEntity.ok(FormatResponse.Success(data = response, message = "Update user successfully"))
             } else {
                 throw UnauthorizedException("Unauthorized")
             }
-        } catch (e: Exception) {
-            FormatResponse.Error(message = "${e.message}")
+        } catch (e: UnauthorizedException) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(FormatResponse.Error(message = "${e.message}"))
+        }catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "${e.message}"))
         }
     }
 
