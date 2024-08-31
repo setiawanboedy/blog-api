@@ -38,15 +38,16 @@ class PostController(
         @Valid
         @RequestBody
         postRequest: CreatePostRequest
-        ): ResponseEntity<FormatResponse<PostResponse>> {
+    ): ResponseEntity<FormatResponse<PostResponse>> {
         return try {
             val post = postService.createPost(postRequest)
             val response = post.toPostResponse()
             ResponseEntity.ok(FormatResponse.Success(data = response, message = "Create post successfully"))
-        }catch (e: MethodArgumentNotValidException){
+        } catch (e: MethodArgumentNotValidException) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = e.message))
-        }catch (e: Exception){
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "Create post failed"))
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(FormatResponse.Error(message = "Create post failed"))
         }
     }
 
@@ -60,17 +61,18 @@ class PostController(
         @Valid
         @RequestBody postRequest: UpdatePostRequest,
     ): ResponseEntity<FormatResponse<PostResponse>> {
-         return try {
+        return try {
             val post = postService.updatePost(id, postRequest)
             val response = post?.toPostResponse()
             ResponseEntity.ok(FormatResponse.Success(data = response, message = "Update post successfully"))
-        }catch (exception: NotFoundException){
+        } catch (exception: NotFoundException) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
-        }catch (exception: MethodArgumentNotValidException){
-             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = exception.message))
+        } catch (exception: MethodArgumentNotValidException) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = exception.message))
 
-        }catch (exception: Exception){
-             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "Update post failed"))
+        } catch (exception: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(FormatResponse.Error(message = "Update post failed"))
 
         }
     }
@@ -82,14 +84,15 @@ class PostController(
     fun detailPost(
         @PathVariable("id") id: Long,
     ): ResponseEntity<FormatResponse<PostResponse>> {
-         return try {
+        return try {
             val post = postService.getPostById(id)
             val response = post?.toPostResponse()
             ResponseEntity.ok(FormatResponse.Success(data = response, message = "Get post successfully"))
-        }catch (exception: NotFoundException){
+        } catch (exception: NotFoundException) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
-        }catch (exception: Exception){
-             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "Get post failed"))
+        } catch (exception: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(FormatResponse.Error(message = "Get post failed"))
 
         }
     }
@@ -100,13 +103,14 @@ class PostController(
     fun deletePost(
         @PathVariable("id") id: Long,
     ): ResponseEntity<FormatResponse<String>> {
-         return try {
+        return try {
             postService.deletePost(id)
             ResponseEntity.ok(FormatResponse.Success(data = "Success", message = "Delete post successfully"))
-        }catch (exception: NotFoundException){
+        } catch (exception: NotFoundException) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
-        }catch (exception: Exception){
-             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(FormatResponse.Error(message = "Delete post failed"))
+        } catch (exception: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(FormatResponse.Error(message = "Delete post failed"))
 
         }
     }
@@ -116,21 +120,30 @@ class PostController(
         produces = ["application/json"],
     )
     fun getListPosts(
+        @RequestParam filter: MutableMap<String, String>,
         @RequestParam(value = "page", defaultValue = "0") page: Int,
         @RequestParam(value = "size", defaultValue = "10") size: Int
     ): ResponseEntity<FormatResponse<List<PostResponse>>> {
         return try {
-            val pageable: Pageable = PageRequest.of(page, size)
-            val posts = postService.getListPosts(pageable)
+            val isPage = filter.containsKey("page")
+            val isSize = filter.containsKey("size")
+            val posts = if (isSize && isPage){
+                val pageable: Pageable = PageRequest.of(page, size)
+                postService.getListPosts(pageable)
+
+            }else{
+                postService.getListPostsByFilter(filter)
+            }
             val listPosts = mutableListOf<PostResponse>()
             posts.forEach { data ->
                 listPosts.add(data.toPostResponse())
             }
             ResponseEntity.ok(FormatResponse.Success(data = listPosts, message = "Get list post successfully"))
-        }catch (exception: UnauthorizedException){
+        } catch (exception: UnauthorizedException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(FormatResponse.Error(message = "Unauthorized"))
-        }catch (exception: Exception){
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = "Update post failed"))
+        } catch (exception: Exception) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = "Get list post failed"))
         }
     }
+
 }

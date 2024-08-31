@@ -19,6 +19,9 @@ interface PostService{
     //List post
     fun getListPosts(pageable: Pageable): Page<Post>
 
+    //List post filter
+    fun getListPostsByFilter(filter: MutableMap<String, String>?): List<Post>
+
     //Get postById
     fun getPostById(id: Long): Post?
 

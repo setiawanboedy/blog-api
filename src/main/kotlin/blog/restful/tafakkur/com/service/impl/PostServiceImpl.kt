@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.util.*
 
 @Service
 class PostServiceImpl(
@@ -32,6 +33,11 @@ class PostServiceImpl(
     //List post
     override fun getListPosts(pageable: Pageable): Page<Post> {
         return postRepository.findAll(pageable)
+    }
+
+    //List post filter
+    override fun getListPostsByFilter(filter: MutableMap<String, String>?): List<Post> {
+        return findListByFilter(filter)
     }
 
     //Get postById
@@ -78,6 +84,34 @@ class PostServiceImpl(
     private fun findPostByIdOrThrowNotFound(id: Long): Post {
         val post = postRepository.findById(id).orElseThrow { NotFoundException("Post with ID $id not found") }
         return post;
+    }
+
+    private fun findListByFilter(params: MutableMap<String, String>? = null): List<Post> {
+        return when {
+            params?.containsKey("category") == true -> {
+                val category = params["category"] ?: ""
+                postRepository.findByCategory(category)
+            }
+
+            params?.containsKey("title") == true -> {
+                val title = params["title"] ?: ""
+                postRepository.findByTitleIgnoreCase(title)
+            }
+
+            params?.containsKey("status") == true -> {
+                val status = params["status"]?.let {
+                    PostStatus.valueOf(it.uppercase(Locale.getDefault()))
+                }
+                if (status != null) {
+                    postRepository.findByStatus(status)
+
+                } else {
+                    postRepository.findAll()
+                }
+            }
+
+            else -> postRepository.findAll()
+        }
     }
 
     private fun getUpdatePost(id: Long, request: UpdatePostRequest): Post {
