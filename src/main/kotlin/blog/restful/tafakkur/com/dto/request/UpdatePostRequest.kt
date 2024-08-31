@@ -24,5 +24,5 @@ data class UpdatePostRequest(
     val tags: List<String>? = null,
 
     @field:NotNull(message = "Status is required and must be one of: [DRAFT, PUBLISHED, ARCHIVED]")
-    val status: PostStatus,
+    val status: PostStatus? = null,
 )

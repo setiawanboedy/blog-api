@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -58,7 +59,6 @@ class PostController(
     )
     fun updatePost(
         @PathVariable("id") id: Long,
-        @Valid
         @RequestBody postRequest: UpdatePostRequest,
     ): ResponseEntity<FormatResponse<PostResponse>> {
         return try {
@@ -67,8 +67,8 @@ class PostController(
             ResponseEntity.ok(FormatResponse.Success(data = response, message = "Update post successfully"))
         } catch (exception: NotFoundException) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
-        } catch (exception: MethodArgumentNotValidException) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = exception.message))
+        } catch (exception: HttpMessageNotReadableException) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = "${exception.message}"))
 
         } catch (exception: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
