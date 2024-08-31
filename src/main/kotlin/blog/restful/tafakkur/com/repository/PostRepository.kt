@@ -17,12 +17,6 @@ interface PostRepository : JpaRepository<Post, Long> {
     // Menemukan semua postingan yang diterbitkan
     fun findByStatus(status: PostStatus): List<Post>
 
-    // Menemukan postingan berdasarkan penulis
-    fun findByAuthor(author: String): List<Post>
-
-    // Menemukan postingan yang dibuat setelah tanggal tertentu
-    fun findByCreatedAtAfter(date: LocalDateTime): List<Post>
-
     // Menemukan postingan berdasarkan kata kunci di konten
     fun findByContentContainingIgnoreCase(keyword: String): List<Post>
 

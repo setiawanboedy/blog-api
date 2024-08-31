@@ -66,16 +66,6 @@ class PostServiceImpl(
         return postRepository.findByStatus(status)
     }
 
-    // Menemukan postingan berdasarkan penulis
-    override fun findByAuthor(author: String): List<Post> {
-        return postRepository.findByAuthor(author)
-    }
-
-    // Menemukan postingan yang dibuat setelah tanggal tertentu
-    override fun findByCreatedAtAfter(date: LocalDateTime): List<Post> {
-        return postRepository.findByCreatedAtAfter(date)
-    }
-
     // Menemukan postingan berdasarkan kata kunci di konten
     override fun findByContentContainingIgnoreCase(keyword: String): List<Post> {
         return postRepository.findByContentContainingIgnoreCase(keyword)
