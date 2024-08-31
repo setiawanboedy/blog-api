@@ -11,7 +11,6 @@ import blog.restful.tafakkur.com.service.PostService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -80,12 +79,17 @@ class PostServiceImpl(
         return when {
             params?.containsKey("category") == true -> {
                 val category = params["category"] ?: ""
-                postRepository.findByCategory(category)
+                findByCategory(category)
             }
 
             params?.containsKey("title") == true -> {
                 val title = params["title"] ?: ""
-                postRepository.findByTitleIgnoreCase(title)
+                findByTitleIgnoreCase(title)
+            }
+
+            params?.containsKey("keyword") == true -> {
+                val keyword = params["keyword"] ?: ""
+                findByContentContainingIgnoreCase(keyword)
             }
 
             params?.containsKey("status") == true -> {
@@ -93,7 +97,7 @@ class PostServiceImpl(
                     PostStatus.valueOf(it.uppercase(Locale.getDefault()))
                 }
                 if (status != null) {
-                    postRepository.findByStatus(status)
+                    findByStatus(status)
 
                 } else {
                     postRepository.findAll()
