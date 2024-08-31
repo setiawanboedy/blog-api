@@ -11,7 +11,7 @@ import blog.restful.tafakkur.com.service.PostService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
+import java.util.*
 
 @Service
 class PostServiceImpl(
@@ -34,6 +34,11 @@ class PostServiceImpl(
         return postRepository.findAll(pageable)
     }
 
+    //List post filter
+    override fun getListPostsByFilter(filter: MutableMap<String, String>?): List<Post> {
+        return findListByFilter(filter)
+    }
+
     //Get postById
     override fun getPostById(id: Long): Post? {
         return findPostByIdOrThrowNotFound(id)
@@ -41,6 +46,7 @@ class PostServiceImpl(
 
     //Delete post
     override fun deletePost(id: Long) {
+        findPostByIdOrThrowNotFound(id)
         return postRepository.deleteById(id)
     }
 
@@ -59,16 +65,6 @@ class PostServiceImpl(
         return postRepository.findByStatus(status)
     }
 
-    // Menemukan postingan berdasarkan penulis
-    override fun findByAuthor(author: String): List<Post> {
-        return postRepository.findByAuthor(author)
-    }
-
-    // Menemukan postingan yang dibuat setelah tanggal tertentu
-    override fun findByCreatedAtAfter(date: LocalDateTime): List<Post> {
-        return postRepository.findByCreatedAtAfter(date)
-    }
-
     // Menemukan postingan berdasarkan kata kunci di konten
     override fun findByContentContainingIgnoreCase(keyword: String): List<Post> {
         return postRepository.findByContentContainingIgnoreCase(keyword)
@@ -77,6 +73,39 @@ class PostServiceImpl(
     private fun findPostByIdOrThrowNotFound(id: Long): Post {
         val post = postRepository.findById(id).orElseThrow { NotFoundException("Post with ID $id not found") }
         return post;
+    }
+
+    private fun findListByFilter(params: MutableMap<String, String>? = null): List<Post> {
+        return when {
+            params?.containsKey("category") == true -> {
+                val category = params["category"] ?: ""
+                findByCategory(category)
+            }
+
+            params?.containsKey("title") == true -> {
+                val title = params["title"] ?: ""
+                findByTitleIgnoreCase(title)
+            }
+
+            params?.containsKey("keyword") == true -> {
+                val keyword = params["keyword"] ?: ""
+                findByContentContainingIgnoreCase(keyword)
+            }
+
+            params?.containsKey("status") == true -> {
+                val status = params["status"]?.let {
+                    PostStatus.valueOf(it.uppercase(Locale.getDefault()))
+                }
+                if (status != null) {
+                    findByStatus(status)
+
+                } else {
+                    postRepository.findAll()
+                }
+            }
+
+            else -> postRepository.findAll()
+        }
     }
 
     private fun getUpdatePost(id: Long, request: UpdatePostRequest): Post {

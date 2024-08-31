@@ -14,7 +14,7 @@ class Post(
     @Column(nullable = false)
     var title: String,
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "LONGTEXT", nullable = false)
     var content: String,
 
     @Column(nullable = false)

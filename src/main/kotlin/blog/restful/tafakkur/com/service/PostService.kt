@@ -19,6 +19,9 @@ interface PostService{
     //List post
     fun getListPosts(pageable: Pageable): Page<Post>
 
+    //List post filter
+    fun getListPostsByFilter(filter: MutableMap<String, String>?): List<Post>
+
     //Get postById
     fun getPostById(id: Long): Post?
 
@@ -33,12 +36,6 @@ interface PostService{
 
     // Menemukan semua postingan yang diterbitkan
     fun findByStatus(status: PostStatus): List<Post>
-
-    // Menemukan postingan berdasarkan penulis
-    fun findByAuthor(author: String): List<Post>
-
-    // Menemukan postingan yang dibuat setelah tanggal tertentu
-    fun findByCreatedAtAfter(date: LocalDateTime): List<Post>
 
     // Menemukan postingan berdasarkan kata kunci di konten
     fun findByContentContainingIgnoreCase(keyword: String): List<Post>
