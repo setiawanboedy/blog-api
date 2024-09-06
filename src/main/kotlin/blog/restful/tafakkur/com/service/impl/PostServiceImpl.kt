@@ -19,7 +19,9 @@ class PostServiceImpl(
 ) : PostService {
     // Buat post
     override fun createPost(postRequest: CreatePostRequest): Post {
-        val post = postRequest.toPost()
+        val post = postRequest.toPost().apply {
+            slug = generateUniqueSlug(title)
+        }
         return postRepository.save(post)
     }
 
@@ -68,6 +70,29 @@ class PostServiceImpl(
     // Menemukan postingan berdasarkan kata kunci di konten
     override fun findByContentContainingIgnoreCase(keyword: String): List<Post> {
         return postRepository.findByContentContainingIgnoreCase(keyword)
+    }
+
+    private fun generateUniqueSlug(title: String): String {
+        val slug = generateSlug(title)
+        var uniqueSlug = slug
+        var counter = 1
+
+        while (postRepository.existsBySlug(uniqueSlug)) {
+            uniqueSlug = "$slug-$counter"
+            counter++
+        }
+
+        return uniqueSlug
+    }
+
+
+    private fun generateSlug(title: String): String {
+        return title
+            .trim()
+            .lowercase()
+            .replace(Regex("[^a-z0-9\\s-]"), "")
+            .replace("\\s+".toRegex(), "-")
+            .replace("-+".toRegex(), "-")
     }
 
     private fun findPostByIdOrThrowNotFound(id: Long): Post {

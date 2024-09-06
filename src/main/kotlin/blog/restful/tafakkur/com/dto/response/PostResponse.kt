@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 data class PostResponse(
     val id: Long,
     val title: String,
+    val subtitle: String,
     val content: String,
     val author: String,
     val category: String,

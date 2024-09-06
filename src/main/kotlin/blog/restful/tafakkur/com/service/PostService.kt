@@ -39,4 +39,5 @@ interface PostService{
 
     // Menemukan postingan berdasarkan kata kunci di konten
     fun findByContentContainingIgnoreCase(keyword: String): List<Post>
+
 }

@@ -14,6 +14,9 @@ class Post(
     @Column(nullable = false)
     var title: String,
 
+    @Column(nullable = false)
+    var subtitle: String,
+
     @Column(columnDefinition = "LONGTEXT", nullable = false)
     var content: String,
 
@@ -47,6 +50,7 @@ class Post(
         return PostResponse(
             id = this.id,
             title = this.title,
+            subtitle = this.subtitle,
             content = this.content,
             author = this.author,
             category = this.category,
