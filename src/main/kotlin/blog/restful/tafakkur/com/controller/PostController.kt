@@ -29,7 +29,7 @@ class PostController(
 ) {
     @PostMapping(
         value = ["/create"],
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], // Konsumsi multipart/form-data
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun createPost(
@@ -45,9 +45,11 @@ class PostController(
         tags: String? = null,
         @RequestPart(value = "status", required = false)
         status: String = PostStatus.DRAFT.name,
+        @RequestPart(value = "thumbnailLinkUrl", required = false)
+        thumbnailLinkUrl: String? = null,
         @RequestPart(value = "thumbnailImageUrl", required = false) file: MultipartFile?,
     ): ResponseEntity<FormatResponse<PostResponse>> {
-        var thumbnailUrl: String? = null
+        var thumbnailUrl: String? = thumbnailLinkUrl
         file?.let {
             thumbnailUrl = storageService.storeFile(it, subfolder = "posts")
         }
@@ -64,7 +66,7 @@ class PostController(
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(FormatResponse.Error(message = e.message))
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(FormatResponse.Error(message = "Create post failed"))
+                .body(FormatResponse.Error(message = "Create post failed: ${e.message}"))
         }
     }
 
