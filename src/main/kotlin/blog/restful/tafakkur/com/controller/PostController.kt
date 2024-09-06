@@ -1,7 +1,6 @@
 package blog.restful.tafakkur.com.controller
 
 import blog.restful.tafakkur.com.converter.StringListConverter
-import blog.restful.tafakkur.com.converter.convertStringToList
 import blog.restful.tafakkur.com.dto.FormatResponse
 import blog.restful.tafakkur.com.dto.request.CreatePostRequest
 import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
@@ -54,7 +53,7 @@ class PostController(
         }
         return try {
 
-            val finalTags = convertStringToList(tags)
+            val finalTags = stringListConverter.convertToEntityAttribute(tags)
             val applyPostRequest = CreatePostRequest(
                 title, subtitle, content, category, finalTags, status, thumbnailUrl
             )
