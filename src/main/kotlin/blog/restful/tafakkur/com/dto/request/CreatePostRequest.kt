@@ -10,6 +10,9 @@ data class CreatePostRequest(
     val title: String,
 
     @field:NotBlank(message = "required")
+    val subtitle: String,
+
+    @field:NotBlank(message = "required")
     val content: String,
 
     @field:NotBlank(message = "required" )
@@ -18,9 +21,9 @@ data class CreatePostRequest(
     @field:NotBlank(message = "required")
     val category: String,
 
-    @field:NotBlank(message = "required")
-    @field:UniqueSlug(message = "Slug must be unique")
-    val slug: String,
+//    @field:NotBlank(message = "required")
+//    @field:UniqueSlug(message = "Slug must be unique")
+//    val slug: String,
 
     val thumbnailImageUrl: String? = null,
 
@@ -31,10 +34,11 @@ data class CreatePostRequest(
     fun toPost(): Post{
         return Post(
             title = this.title,
+            subtitle = this.subtitle,
             content = this.content,
             author = this.author,
             category = this.category,
-            slug = this.slug,
+            slug = "",
             thumbnailImageUrl = this.thumbnailImageUrl,
             tags = this.tags,
             status = this.status
