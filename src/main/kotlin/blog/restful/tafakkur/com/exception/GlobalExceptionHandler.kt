@@ -37,7 +37,7 @@ class GlobalExceptionHandler {
         ex: HttpMessageNotReadableException,
         request: WebRequest
     ): ResponseEntity<FormatResponse<Nothing>> {
-        val errorMessage = "Accepted values are: [DRAFT, PUBLISHED, ARCHIVED]"
+        val errorMessage = "Status accepted values are: [DRAFT, PUBLISHED, ARCHIVED]"
         return ResponseEntity(
             FormatResponse.Error(status = "Error", code = 400, message = errorMessage),
             HttpStatus.BAD_REQUEST

@@ -1,47 +1,64 @@
 package blog.restful.tafakkur.com.controller
 
+import blog.restful.tafakkur.com.converter.StringListConverter
+import blog.restful.tafakkur.com.converter.convertStringToList
 import blog.restful.tafakkur.com.dto.FormatResponse
 import blog.restful.tafakkur.com.dto.request.CreatePostRequest
 import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
 import blog.restful.tafakkur.com.dto.response.PostResponse
 import blog.restful.tafakkur.com.exception.NotFoundException
 import blog.restful.tafakkur.com.exception.UnauthorizedException
+import blog.restful.tafakkur.com.model.PostStatus
 import blog.restful.tafakkur.com.service.PostService
-import jakarta.validation.Valid
+import blog.restful.tafakkur.com.service.StorageService
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("api/posts")
 class PostController(
-    private val postService: PostService
+    private val postService: PostService,
+    private val storageService: StorageService,
+    private val stringListConverter: StringListConverter
 ) {
     @PostMapping(
-        value = ["create"],
-        produces = ["application/json"],
-        consumes = ["application/json"],
+        value = ["/create"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], // Konsumsi multipart/form-data
+        produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     fun createPost(
-        @Valid
-        @RequestBody
-        postRequest: CreatePostRequest
+        @RequestPart(value = "title", required = true)
+        title: String,
+        @RequestPart(value = "subtitle", required = true)
+        subtitle: String,
+        @RequestPart(value = "content", required = true)
+        content: String,
+        @RequestPart(value = "category", required = true)
+        category: String,
+        @RequestPart(value = "tags", required = false)
+        tags: String? = null,
+        @RequestPart(value = "status", required = false)
+        status: String = PostStatus.DRAFT.name,
+        @RequestPart(value = "thumbnailImageUrl", required = false) file: MultipartFile?,
     ): ResponseEntity<FormatResponse<PostResponse>> {
+        var thumbnailUrl: String? = null
+        file?.let {
+            thumbnailUrl = storageService.storeFile(it, subfolder = "posts")
+        }
         return try {
-            val post = postService.createPost(postRequest)
+
+            val finalTags = convertStringToList(tags)
+            val applyPostRequest = CreatePostRequest(
+                title, subtitle, content, category, finalTags, status, thumbnailUrl
+            )
+            val post = postService.createPost(applyPostRequest)
             val response = post.toPostResponse()
             ResponseEntity.ok(FormatResponse.Success(data = response, message = "Create post successfully"))
         } catch (e: MethodArgumentNotValidException) {
@@ -116,7 +133,7 @@ class PostController(
     }
 
     @GetMapping(
-        value = ["list"],
+        value = ["/list"],
         produces = ["application/json"],
     )
     fun getListPosts(

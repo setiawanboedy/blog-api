@@ -1,5 +1,6 @@
 package blog.restful.tafakkur.com.model
 
+import blog.restful.tafakkur.com.converter.StringListConverter
 import blog.restful.tafakkur.com.dto.response.PostResponse
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -26,9 +27,8 @@ class Post(
     @Column(nullable = false)
     var category: String,
 
-    @ElementCollection
-    @CollectionTable(name = "post_tags", joinColumns = [JoinColumn(name = "post_id")])
-    @Column(name = "tag")
+    @Convert(converter = StringListConverter::class)
+    @Column(nullable = false, columnDefinition = "TEXT")
     var tags: List<String> = mutableListOf(),
 
     @Enumerated(EnumType.STRING)

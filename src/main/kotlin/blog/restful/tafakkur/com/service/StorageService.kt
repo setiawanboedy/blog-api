@@ -23,11 +23,16 @@ class StorageService(
 
     fun storeFile(file: MultipartFile, subfolder: String, replace: Boolean = false): String {
         val oriName = file.originalFilename ?: throw RuntimeException("Invalid file")
+
+        // Bersihkan nama file untuk menghindari karakter ilegal
+        val sanitizedFileName = oriName.replace(Regex("[^a-zA-Z0-9._-]"), "_")
+
+        // Tentukan nama file
         val fileName: String = if (replace) {
-            oriName
+            sanitizedFileName
         } else {
             val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
-            "${timestamp}_${oriName}"
+            "${timestamp}_${sanitizedFileName}"
         }
 
         // Gabungkan subfolder dengan direktori utama
@@ -39,14 +44,21 @@ class StorageService(
         }
 
         val targetLocation = subfolderPath.resolve(fileName)
-        try {
 
-            Files.deleteIfExists(targetLocation)
+        try {
+            // Hapus file jika sudah ada dan replace=true
+            if (replace) {
+                Files.deleteIfExists(targetLocation)
+            }
+
+            // Salin file ke target lokasi
             Files.copy(file.inputStream, targetLocation)
 
         } catch (ex: IOException) {
             throw RuntimeException("Could not store file, try again!", ex)
         }
-        return fileName
+
+        // Kembalikan path relatif dari file yang disimpan
+        return Paths.get(subfolder, fileName).toString().replace("\\", "/")
     }
 }

@@ -7,6 +7,7 @@ import blog.restful.tafakkur.com.exception.NotFoundException
 import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
 import blog.restful.tafakkur.com.repository.PostRepository
+import blog.restful.tafakkur.com.repository.UserRepository
 import blog.restful.tafakkur.com.service.PostService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -15,13 +16,16 @@ import java.util.*
 
 @Service
 class PostServiceImpl(
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val userRepository: UserRepository
 ) : PostService {
     // Buat post
     override fun createPost(postRequest: CreatePostRequest): Post {
         val post = postRequest.toPost().apply {
+            author = "Budi Setiawan"
             slug = generateUniqueSlug(title)
         }
+        println(post.status)
         return postRepository.save(post)
     }
 
