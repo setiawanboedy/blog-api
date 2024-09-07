@@ -36,6 +36,7 @@ class SecurityConfig(private val jwtFilter: JwtFilter) {
         }.authorizeHttpRequests{ auth ->
             auth
                 .requestMatchers(
+                    "files/images/**",
                     "/api/auth/login",
                     "/api/auth/register",
                 ).permitAll()

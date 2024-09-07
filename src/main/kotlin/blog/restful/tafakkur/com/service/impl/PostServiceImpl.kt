@@ -7,7 +7,6 @@ import blog.restful.tafakkur.com.exception.NotFoundException
 import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
 import blog.restful.tafakkur.com.repository.PostRepository
-import blog.restful.tafakkur.com.repository.UserRepository
 import blog.restful.tafakkur.com.service.PostService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,7 +16,6 @@ import java.util.*
 @Service
 class PostServiceImpl(
     private val postRepository: PostRepository,
-    private val userRepository: UserRepository
 ) : PostService {
     // Buat post
     override fun createPost(postRequest: CreatePostRequest): Post {
@@ -25,7 +23,6 @@ class PostServiceImpl(
             author = "Budi Setiawan"
             slug = generateUniqueSlug(title)
         }
-        println(post.status)
         return postRepository.save(post)
     }
 
@@ -63,7 +60,7 @@ class PostServiceImpl(
 
     // Menemukan postingan berdasarkan judul (case-insensitive)
     override fun findByTitleIgnoreCase(title: String): List<Post> {
-        return postRepository.findByTitleIgnoreCase(title)
+        return postRepository.findByTitleContainingIgnoreCase(title)
     }
 
     // Menemukan semua postingan yang diterbitkan
@@ -140,14 +137,14 @@ class PostServiceImpl(
     private fun getUpdatePost(id: Long, request: UpdatePostRequest): Post {
         val post = findPostByIdOrThrowNotFound(id)
         post.let {
-            it.title = request.title ?: it.title
-            it.content = request.content ?: it.content
-            it.author = request.author ?: it.author
-            it.category = request.category ?: it.category
-            it.slug = request.slug ?: it.slug
+            it.title = request.title
+            it.content = request.content
+            it.author = it.author
+            it.category = request.category
+            it.slug = it.slug
             it.thumbnailImageUrl = request.thumbnailImageUrl ?: it.thumbnailImageUrl
-            it.tags = request.tags ?: it.tags
-            it.status = request.status ?: it.status
+            it.tags = request.tags
+            it.status = PostStatus.valueOf(request.status ?: it.status.name)
         }
 
         return post

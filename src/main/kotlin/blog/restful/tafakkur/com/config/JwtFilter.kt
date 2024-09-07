@@ -77,6 +77,7 @@ class JwtFilter(
         val excludedPaths = listOf(
             "/api/auth/login",
             "/api/auth/register",
+            "/files/images/**",
             "/v3/api-docs/**",
             "/swagger-ui/**"
         )
