@@ -3,7 +3,9 @@ package blog.restful.tafakkur.com.service.impl
 
 import blog.restful.tafakkur.com.dto.request.CreatePostRequest
 import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
+import blog.restful.tafakkur.com.dto.response.DashboardResponse
 import blog.restful.tafakkur.com.exception.NotFoundException
+import blog.restful.tafakkur.com.model.Category
 import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
 import blog.restful.tafakkur.com.repository.PostRepository
@@ -45,6 +47,17 @@ class PostServiceImpl(
     //Get postById
     override fun getPostById(id: Long): Post? {
         return findPostByIdOrThrowNotFound(id)
+    }
+
+    override fun getPostDashboard(): DashboardResponse {
+        val technology = findListByFilter(mutableMapOf("category" to Category.Technology.name))
+        val programming = findListByFilter(mutableMapOf("category" to Category.Programming.name))
+        val design = findListByFilter(mutableMapOf("category" to Category.Design.name))
+        return DashboardResponse(
+            technology = technology.size,
+            programming = programming.size,
+            design = design.size
+        )
     }
 
     //Delete post

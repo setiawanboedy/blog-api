@@ -4,6 +4,7 @@ import blog.restful.tafakkur.com.converter.StringListConverter
 import blog.restful.tafakkur.com.dto.FormatResponse
 import blog.restful.tafakkur.com.dto.request.CreatePostRequest
 import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
+import blog.restful.tafakkur.com.dto.response.DashboardResponse
 import blog.restful.tafakkur.com.dto.response.PostResponse
 import blog.restful.tafakkur.com.exception.NotFoundException
 import blog.restful.tafakkur.com.exception.UnauthorizedException
@@ -54,7 +55,6 @@ class PostController(
             thumbnailUrl = storageService.storeFile(it, subfolder = "posts")
         }
         return try {
-
             val finalTags = stringListConverter.convertToEntityAttribute(tags)
             val applyPostRequest = CreatePostRequest(
                 title =  title,
@@ -146,6 +146,23 @@ class PostController(
         } catch (exception: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(FormatResponse.Error(message = "Get post failed"))
+
+        }
+    }
+
+    @GetMapping(
+        value = ["/dashboard"],
+        produces = ["application/json"],
+    )
+    fun dashboardPost(): ResponseEntity<FormatResponse<DashboardResponse>> {
+        return try {
+            val response = postService.getPostDashboard()
+            ResponseEntity.ok(FormatResponse.Success(data = response, message = "Get dashboard successfully"))
+        } catch (exception: NotFoundException) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(FormatResponse.Error(message = "${exception.message}"))
+        } catch (exception: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(FormatResponse.Error(message = "Get dashboard failed"))
 
         }
     }

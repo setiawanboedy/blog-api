@@ -69,3 +69,9 @@ enum class PostStatus {
     PUBLISHED,
     ARCHIVED
 }
+
+enum class Category {
+    Programming,
+    Technology,
+    Design
+}

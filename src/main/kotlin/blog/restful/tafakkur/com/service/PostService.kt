@@ -2,6 +2,7 @@ package blog.restful.tafakkur.com.service
 
 import blog.restful.tafakkur.com.dto.request.CreatePostRequest
 import blog.restful.tafakkur.com.dto.request.UpdatePostRequest
+import blog.restful.tafakkur.com.dto.response.DashboardResponse
 import blog.restful.tafakkur.com.model.Post
 import blog.restful.tafakkur.com.model.PostStatus
 import org.springframework.data.domain.Page
@@ -24,6 +25,8 @@ interface PostService{
 
     //Get postById
     fun getPostById(id: Long): Post?
+
+    fun getPostDashboard(): DashboardResponse
 
     //Delete post
     fun deletePost(id: Long)
