@@ -44,6 +44,12 @@ class PostController(
         category: String,
         @RequestPart(value = "tags", required = false)
         tags: String? = null,
+        @RequestPart(value = "main", required = false)
+        main: String,
+        @RequestPart(value = "popular", required = false)
+        popular: String,
+        @RequestPart(value = "sponsored", required = false)
+        sponsored: String,
         @RequestPart(value = "status", required = false)
         status: String = PostStatus.DRAFT.name,
         @RequestPart(value = "thumbnailLinkUrl", required = false)
@@ -57,13 +63,16 @@ class PostController(
         return try {
             val finalTags = stringListConverter.convertToEntityAttribute(tags)
             val applyPostRequest = CreatePostRequest(
-                title =  title,
-                subtitle =  subtitle,
-                content =  content,
-                category =  category,
-                tags =  finalTags,
-                status =  status,
-                thumbnailImageUrl =  thumbnailUrl
+                title = title,
+                subtitle = subtitle,
+                content = content,
+                category = category,
+                tags = finalTags,
+                main = main.toBoolean(),
+                popular = popular.toBoolean(),
+                sponsored = sponsored.toBoolean(),
+                status = status,
+                thumbnailImageUrl = thumbnailUrl
             )
             val post = postService.createPost(applyPostRequest)
             val response = post.toPostResponse()
@@ -93,6 +102,12 @@ class PostController(
         category: String,
         @RequestPart(value = "tags", required = false)
         tags: String? = null,
+        @RequestPart(value = "main", required = false)
+        main: String,
+        @RequestPart(value = "popular", required = false)
+        popular: String,
+        @RequestPart(value = "sponsored", required = false)
+        sponsored: String,
         @RequestPart(value = "status", required = false)
         status: String = PostStatus.DRAFT.name,
         @RequestPart(value = "thumbnailLinkUrl", required = false)
@@ -112,6 +127,9 @@ class PostController(
                 content = content,
                 category =  category,
                 tags =  finalTags,
+                main = main.toBoolean(),
+                popular = popular.toBoolean(),
+                sponsored = sponsored.toBoolean(),
                 status =  status,
                 thumbnailImageUrl =  thumbnailUrl
             )

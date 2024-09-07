@@ -41,6 +41,15 @@ class Post(
     var slug: String,
 
     @Column(nullable = false)
+    var main: Boolean = false,
+
+    @Column(nullable = false)
+    var sponsored: Boolean = false,
+
+    @Column(nullable = false)
+    var popular: Boolean = false,
+
+    @Column(nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(nullable = false)
@@ -58,6 +67,9 @@ class Post(
             status = this.status,
             thumbnailImageUrl = this.thumbnailImageUrl,
             slug = this.slug,
+            main = this.main,
+            popular = this.popular,
+            sponsored = this.sponsored,
             createdAt = this.createdAt,
             updatedAt = this.updatedAt
         )

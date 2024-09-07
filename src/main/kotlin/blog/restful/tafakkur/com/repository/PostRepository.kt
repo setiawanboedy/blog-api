@@ -17,6 +17,12 @@ interface PostRepository : JpaRepository<Post, Long> {
     // Menemukan semua postingan yang diterbitkan
     fun findByStatus(status: PostStatus): List<Post>
 
+    fun findByMain(main: Boolean): List<Post>
+
+    fun findBySponsored(sponsored: Boolean): List<Post>
+
+    fun findByPopular(popular: Boolean): List<Post>
+
     // Menemukan postingan berdasarkan kata kunci di konten
     fun findByContentContainingIgnoreCase(keyword: String): List<Post>
 

@@ -86,6 +86,18 @@ class PostServiceImpl(
         return postRepository.findByContentContainingIgnoreCase(keyword)
     }
 
+    override fun findByMain(main: Boolean): List<Post> {
+        return postRepository.findByMain(main)
+    }
+
+    override fun findBySponsored(sponsored: Boolean): List<Post> {
+        return postRepository.findBySponsored(sponsored)
+    }
+
+    override fun findByPopular(popular: Boolean): List<Post> {
+        return postRepository.findByPopular(popular)
+    }
+
     private fun generateUniqueSlug(title: String): String {
         val slug = generateSlug(title)
         var uniqueSlug = slug
@@ -131,6 +143,21 @@ class PostServiceImpl(
                 findByContentContainingIgnoreCase(keyword)
             }
 
+            params?.containsKey("main") == true -> {
+                val main = params["main"]
+                findByMain(main.toBoolean())
+            }
+
+            params?.containsKey("popular") == true -> {
+                val popular = params["popular"]
+                findByPopular(popular.toBoolean())
+            }
+
+            params?.containsKey("sponsored") == true -> {
+                val sponsored = params["sponsored"]
+                findBySponsored(sponsored.toBoolean())
+            }
+
             params?.containsKey("status") == true -> {
                 val status = params["status"]?.let {
                     PostStatus.valueOf(it.uppercase(Locale.getDefault()))
@@ -157,6 +184,9 @@ class PostServiceImpl(
             it.slug = it.slug
             it.thumbnailImageUrl = request.thumbnailImageUrl ?: it.thumbnailImageUrl
             it.tags = request.tags
+            it.main = request.main
+            it.popular = request.popular
+            it.sponsored = request.sponsored
             it.status = PostStatus.valueOf(request.status ?: it.status.name)
         }
 

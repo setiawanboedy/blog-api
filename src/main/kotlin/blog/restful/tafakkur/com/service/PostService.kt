@@ -43,4 +43,9 @@ interface PostService{
     // Menemukan postingan berdasarkan kata kunci di konten
     fun findByContentContainingIgnoreCase(keyword: String): List<Post>
 
+    fun findByMain(main: Boolean): List<Post>
+
+    fun findBySponsored(sponsored: Boolean): List<Post>
+
+    fun findByPopular(popular: Boolean): List<Post>
 }
