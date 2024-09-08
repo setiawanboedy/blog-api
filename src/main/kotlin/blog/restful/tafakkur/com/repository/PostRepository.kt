@@ -12,10 +12,16 @@ interface PostRepository : JpaRepository<Post, Long> {
     fun findByCategory(category: String): List<Post>
 
     // Menemukan postingan berdasarkan judul (case-insensitive)
-    fun findByTitleIgnoreCase(title: String): List<Post>
+    fun findByTitleContainingIgnoreCase(title: String): List<Post>
 
     // Menemukan semua postingan yang diterbitkan
     fun findByStatus(status: PostStatus): List<Post>
+
+    fun findByMain(main: Boolean): List<Post>
+
+    fun findBySponsored(sponsored: Boolean): List<Post>
+
+    fun findByPopular(popular: Boolean): List<Post>
 
     // Menemukan postingan berdasarkan kata kunci di konten
     fun findByContentContainingIgnoreCase(keyword: String): List<Post>

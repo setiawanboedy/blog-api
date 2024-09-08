@@ -14,6 +14,9 @@ data class PostResponse(
     val status: PostStatus,
     val thumbnailImageUrl: String?,
     val slug: String,
+    val main: Boolean,
+    val popular: Boolean,
+    val sponsored: Boolean,
     val createdAt: LocalDateTime,
     var updatedAt: LocalDateTime,
 )

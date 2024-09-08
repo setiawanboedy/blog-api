@@ -7,22 +7,14 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 
 data class UpdatePostRequest(
-    val id: Long,
-
-    val title: String? = null,
-
-    val content: String? = null,
-
-    val author: String? = null,
-
-    val category: String? = null,
-
-    val slug: String? = null,
-
+    val title: String,
+    val subtitle: String,
+    val content: String,
+    val category: String,
+    val tags: List<String> = mutableListOf(),
     val thumbnailImageUrl: String? = null,
-
-    val tags: List<String>? = null,
-
-    @field:NotNull(message = "Status is required and must be one of: [DRAFT, PUBLISHED, ARCHIVED]")
-    val status: PostStatus? = null,
+    val main: Boolean,
+    val popular: Boolean,
+    val sponsored: Boolean,
+    val status: String? = null,
 )

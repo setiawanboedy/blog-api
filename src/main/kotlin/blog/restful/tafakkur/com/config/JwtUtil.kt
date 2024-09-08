@@ -6,6 +6,9 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.crypto.SecretKey
 
@@ -43,12 +46,12 @@ class JwtUtil {
         return extractClaim(token, Claims::getExpiration)
     }
 
-    fun extractExpiresIn(token: String): Long {
+    fun extractExpiresIn(token: String): String {
         val expirationTime = extractExpiration(token).time
-        val currentTime = System.currentTimeMillis()
-        val expiresIn = (expirationTime - currentTime) / 1000
+        val expirationInstant = Instant.ofEpochMilli(expirationTime)
+        val isoFormater = DateTimeFormatter.ISO_INSTANT.withZone(ZoneOffset.UTC)
 
-        return expiresIn
+        return isoFormater.format(expirationInstant)
     }
 
     private fun <T> extractClaim(token: String, claimsResolver: (Claims) -> T): T {
