@@ -7,13 +7,11 @@ plugins {
 	id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
-tasks {
-	shadowJar {
+tasks.jar {
 		archiveFileName.set("blog-production.jar")
 		manifest {
 			attributes["Main-Class"] = "blog.restful.tafakkur.com.BlogApiApplication"
 		}
-	}
 }
 
 group = "blog"
