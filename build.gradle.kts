@@ -4,6 +4,13 @@ plugins {
 	id("org.springframework.boot") version "3.3.2"
 	id("io.spring.dependency-management") version "1.1.6"
 	kotlin("plugin.jpa") version "1.9.24"
+	id("com.github.johnrengelman.shadow") version "7.0.0"
+}
+
+tasks {
+	shadowJar {
+		archiveFileName.set("blog-production.jar")
+	}
 }
 
 group = "blog"

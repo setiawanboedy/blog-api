@@ -1,4 +1,4 @@
-package blog.restful.tafakkur.com.controller
+package selapang.restful.tafakkur.com.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
