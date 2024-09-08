@@ -22,18 +22,12 @@ class JwtFilter(
     private val objectMapper: ObjectMapper,
     private val tokenBlacklistService: TokenBlacklistService
 ) : OncePerRequestFilter() {
-    private val pathMatcher = AntPathMatcher()
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
         try {
-            val requestPath = request.servletPath
-            if (isExcludedPath(requestPath)) {
-                filterChain.doFilter(request, response)
-                return
-            }
 
             val authorizationHeader = request.getHeader("Authorization")
             var username: String? = null
@@ -48,11 +42,8 @@ class JwtFilter(
                 username = jwtUtil.extractUsername(jwt)
             }
 
-            if (jwt == null) {
-                throw UnauthorizedException("Unauthorized")
-            }
 
-            if (SecurityContextHolder.getContext().authentication == null) {
+            if (SecurityContextHolder.getContext().authentication == null && jwt != null) {
                 val userDetails = userDetailsService.loadUserByUsername(username)
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     val authToken = UsernamePasswordAuthenticationToken(
@@ -71,19 +62,6 @@ class JwtFilter(
         }
 
     }
-
-    private fun isExcludedPath(requestPath: String): Boolean {
-        // Daftar path yang dikecualikan dengan wildcard
-        val excludedPaths = listOf(
-            "/api/auth/login",
-            "/api/auth/register",
-            "/files/images/**",
-            "/v3/api-docs/**",
-            "/swagger-ui/**"
-        )
-        return excludedPaths.any { pathPattern -> pathMatcher.match(pathPattern, requestPath) }
-    }
-
 
     private fun sendErrorResponse(response: HttpServletResponse, message: String) {
         val errorResponse = FormatResponse.Error(

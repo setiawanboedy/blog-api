@@ -37,13 +37,14 @@ class SecurityConfig(private val jwtFilter: JwtFilter) {
             auth
                 .requestMatchers(
                     "files/images/**",
-                    "/api/auth/login",
-                    "/api/auth/register",
+                    "api/auth/login",
+                    "api/auth/register",
                 ).permitAll()
                 .requestMatchers(
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**",
+                    "v3/api-docs/**",
+                    "swagger-ui/**",
                 ).permitAll()
+
                 .anyRequest().authenticated()
         }
             .sessionManagement{ session ->
