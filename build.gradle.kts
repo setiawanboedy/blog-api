@@ -10,6 +10,9 @@ plugins {
 tasks {
 	shadowJar {
 		archiveFileName.set("blog-production.jar")
+		manifest {
+			attributes["Main-Class"] = "blog.restful.tafakkur.com.BlogApiApplication"
+		}
 	}
 }
 
