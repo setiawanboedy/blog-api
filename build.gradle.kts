@@ -64,7 +64,7 @@ tasks.withType<Test> {
 
 tasks.jar {
     manifest {
-        attributes["Main-Class"] = "blog.restful.tafakkur.com.BlogApiApplicationKt"
+        attributes["Main-Class"] = "blog.restful.tafakkur.com.BlogApiApplication"
     }
 
     from(sourceSets.main.get().output)
@@ -74,5 +74,5 @@ tasks.jar {
     })
 }
 springBoot {
-    mainClass.set("blog.restful.tafakkur.com.BlogApiApplicationKt")
+    mainClass.set("blog.restful.tafakkur.com.BlogApiApplication")
 }
