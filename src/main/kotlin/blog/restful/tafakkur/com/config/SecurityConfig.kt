@@ -40,6 +40,7 @@ class SecurityConfig(private val jwtFilter: JwtFilter) {
                     "api/front/posts/**",
                     "api/auth/login",
                     "api/auth/register",
+                    "/"
                 ).permitAll()
                 .requestMatchers(
                     "v3/api-docs/**",
