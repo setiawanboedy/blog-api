@@ -10,7 +10,5 @@ import org.springframework.context.annotation.ComponentScan
 class BlogApiApplication
 
 fun main(args: Array<String>) {
-	runApplication<BlogApiApplication>(*args) {
-		setBannerMode(Banner.Mode.OFF)
-	}
+	runApplication<BlogApiApplication>(*args)
 }
