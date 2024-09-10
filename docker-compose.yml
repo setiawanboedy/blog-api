@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   app:
     build:
@@ -7,6 +6,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      PORT: 8080  
       SPRING_DATASOURCE_URL: jdbc:mysql://34.134.92.189:3306/blog
       SPRING_DATASOURCE_USERNAME: blog
       SPRING_DATASOURCE_PASSWORD: Sinaga@2016
