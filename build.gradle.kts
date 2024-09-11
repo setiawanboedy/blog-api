@@ -64,6 +64,7 @@ tasks.withType<Test> {
 }
 
 tasks.jar {
+    enabled = false
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes["Main-Class"] = "blog.restful.tafakkur.com.BlogApiApplicationKt"
@@ -74,6 +75,9 @@ tasks.jar {
     from({
         configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }
     })
+}
+tasks.bootJar {
+
 }
 springBoot {
     mainClass.set("blog.restful.tafakkur.com.BlogApiApplicationKt")
