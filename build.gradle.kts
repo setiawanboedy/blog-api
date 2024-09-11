@@ -64,6 +64,7 @@ tasks.withType<Test> {
 }
 
 tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes["Main-Class"] = "blog.restful.tafakkur.com.BlogApiApplicationKt"
     }
