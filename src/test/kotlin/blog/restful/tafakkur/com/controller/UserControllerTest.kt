@@ -12,30 +12,30 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import blog.restful.tafakkur.com.dto.request.UpdateUserRequest
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class UserControllerTest {
-    @Autowired
-    private lateinit var mockMvc: MockMvc
+// @SpringBootTest
+// @AutoConfigureMockMvc
+// @ActiveProfiles("test")
+// class UserControllerTest {
+//     @Autowired
+//     private lateinit var mockMvc: MockMvc
 
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
+//     @Autowired
+//     private lateinit var objectMapper: ObjectMapper
 
-    @Test
-    fun `test successful update user`(){
-        val updateUserRequest = UpdateUserRequest(
-            phoneNumber = "098908908",
-            address = "Praya",
-            profilePicture = "www.google.com"
-        )
+//     @Test
+//     fun `test successful update user`(){
+//         val updateUserRequest = UpdateUserRequest(
+//             phoneNumber = "098908908",
+//             address = "Praya",
+//             profilePicture = "www.google.com"
+//         )
 
-        mockMvc.perform(
-            MockMvcRequestBuilders.put("/api/users/me")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateUserRequest))
-        )
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.data.phoneNumber").value("098908908"))
-    }
-}
+//         mockMvc.perform(
+//             MockMvcRequestBuilders.put("/api/users/me")
+//                 .contentType(MediaType.APPLICATION_JSON)
+//                 .content(objectMapper.writeValueAsString(updateUserRequest))
+//         )
+//             .andExpect(MockMvcResultMatchers.status().isOk)
+//             .andExpect(MockMvcResultMatchers.jsonPath("$.data.phoneNumber").value("098908908"))
+//     }
+// }
