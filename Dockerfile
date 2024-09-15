@@ -13,8 +13,3 @@ EXPOSE 8080
 # Perintah untuk menjalankan aplikasi Spring Boot
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
-
-#FROM openjdk:17-jdk-slim
-#RUN sudo ./gradlew build
-#COPY build/libs/blog-api-0.0.1-SNAPSHOT.jar app.jar
-#ENTRYPOINT ["java","-jar","/app.jar"]
