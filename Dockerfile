@@ -1,15 +1,12 @@
-# Gunakan image base JDK 17
-FROM openjdk:17-jdk-alpine
-
-# Set working directory di dalam container
+FROM gradle:7.6.0-jdk17-alpine AS build
 WORKDIR /app
+COPY . /app
+RUN gradle build --no-daemon
 
-# Salin build file JAR dari lokal ke container
-COPY build/libs/blog-api-0.0.1-SNAPSHOT.jar /app/app.jar
-
-# Expose port 8080 agar bisa diakses dari luar container
+# Gunakan image base JDK 17
+# Stage 2: Runtime Stage
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/build/libs/blog-api-0.0.1-SNAPSHOT.jar /app/app.jar
 EXPOSE 8080
-
-# Perintah untuk menjalankan aplikasi Spring Boot
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
-
